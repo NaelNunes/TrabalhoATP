@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <conio2.h>
 #include <stdlib.h>
@@ -21,10 +22,10 @@ struct TpNota {
 	float Nota;
 };
 
-void Moldura(int ColunaI, int LinhaI, int ColunaF, int LinhaF, int CorT, int CorF) {
+void Moldura(int ColunaI, int LinhaI, int ColunaF, int LinhaF, int CorT/*, int CorF */) {
 	int i;
 	textcolor(CorT);
-	textbackground(CorF);
+//	textbackground(CorF);
 	gotoxy(ColunaI, LinhaI); printf("%c",201);
 	gotoxy(ColunaF, LinhaI); printf("%c",187);
 	gotoxy(ColunaI, LinhaF); printf("%c",200);
@@ -45,14 +46,14 @@ void Moldura(int ColunaI, int LinhaI, int ColunaF, int LinhaF, int CorT, int Cor
 }
 
 void InserirInterface(void) {
-	Moldura(1,1,80,25,1,8);
-	Moldura(2,2,79,4,1,8);
+	Moldura(1,1,80,25,15/*,15*/);
+	Moldura(2,2,79,4,15/*,15*/);
 	textcolor(WHITE);
 	gotoxy(32,3);
 	printf("TITULO DO TRABALHO");
-	Moldura(2,5,28,21,1,8);
-	Moldura(29,5,79,21,1,8);
-	Moldura(2,22,79,24,1,8);
+	Moldura(2,5,28,21,15/*,15*/);
+	Moldura(29,5,79,21,15/*,15*/);
+	Moldura(2,22,79,24,15/*,15*/);
 	textcolor(4);
 	gotoxy(3,23);
 	printf("Mensagem: ");
@@ -172,14 +173,14 @@ void CadastrarAluno(TpAlunos Alunos[TF], int &TLA)
         printf("RA: ");
         fflush(stdin);
         gets(AuxRA);
-        while(TL<TF && strcmp(AuxRA,"\0")!=0)
+        while(TLA<TF && strcmp(AuxRA,"\0")!=0)
         {
-            strcpy(Alunos[TL].RA,AuxRA);
+            strcpy(Alunos[TLA].RA,AuxRA);
             ExibirTelao(30,7);
 			printf("Nome: ");
             fflush(stdin);
-            gets(Alunos[TL].Nome);
-            TL++;
+            gets(Alunos[TLA].Nome);
+            TLA++;
             ExibirTelao(30,6);
             printf("                                             ");
             ExibirTelao(30,7);
@@ -198,14 +199,14 @@ void CadastrarDisciplina(TpDisc Disc[TF], int &TLD)
         printf("Codigo da Disciplina: ");
         fflush(stdin);
         scanf("%d",&AuxCODDIC);
-        while(TL<TF && AuxCODDIC != 0)
+        while(TLD<TF && AuxCODDIC != 0)
         {
-            Disc[TL].CodDisc = AuxCODDIC;
+            Disc[TLD].CodDisc = AuxCODDIC;
             ExibirTelao(30,7);
             printf("Nome da Disciplina: ");
             fflush(stdin);
-            gets(Disc[TL].Disc);
-            TL++;
+            gets(Disc[TLD].Disc);
+            TLD++;
             ExibirTelao(30,6);
             printf("                                             ");
             ExibirTelao(30,7);
@@ -252,59 +253,63 @@ void CadastroNotas(TpNota TbNota[TF],int &TLN)
 }
 
 void InserirDados(TpAlunos Aluno[TF], int &TLA, TpDisc Disc[TF], int &TLD, TpNota Nota[TF],int &TLN) {
-	Aluno[TLA].RA = 262412616;
-	Aluno[TLA].Nome = "Nathanael";
+	strcpy(Aluno[TLA].RA, "26.24.1261-6");
+	strcpy(Aluno[TLA].Nome, "Nathanael");
 	TLA++;
-	Aluno[TLA].RA = 262412615;
-	Aluno[TLA].Nome = "Andre";
+	strcpy(Aluno[TLA].RA, "26.24.1261-5");
+	strcpy(Aluno[TLA].Nome, "Andre");
 	TLA++;
-	Aluno[TLA].RA = 262412614;
-	Aluno[TLA].Nome = "Caio";
+	strcpy(Aluno[TLA].RA, "26.24.1261-4");
+	strcpy(Aluno[TLA].Nome, "Silvio");
 	TLA++;
-	Aluno[TLA].RA = 262412613;
-	Aluno[TLA].Nome = "Erique";
+	strcpy(Aluno[TLA].RA, "26.24.1261-3");
+	strcpy(Aluno[TLA].Nome, "Erick");
 	TLA++;
-	Aluno[TLA].RA = 262412612;
-	Aluno[TLA].Nome = "Joao";
+	strcpy(Aluno[TLA].RA, "26.24.1261-2");
+	strcpy(Aluno[TLA].Nome, "Joao");
 	TLA++;
-	Aluno[TLA].RA = 262412611;
-	Aluno[TLA].Nome = "Pedro";
+	strcpy(Aluno[TLA].RA, "26.24.1261-1");
+	strcpy(Aluno[TLA].Nome, "Pedro");
 	TLA++;
 	Disc[TLD].CodDisc = 100;
-	Disc[TLD].Disc = "Matematica";
+	strcpy(Disc[TLD].Disc, "Matematica");
 	TLD++;
 	Disc[TLD].CodDisc = 101;
-	Disc[TLD].Disc = "Portugues";
+	strcpy(Disc[TLD].Disc, "Portugues");
 	TLD++;
 	Disc[TLD].CodDisc = 102;
-	Disc[TLD].Disc = "Ingles";
+	strcpy(Disc[TLD].Disc, "Ingles");
 	TLD++;
 	Disc[TLD].CodDisc = 103;
-	Disc[TLD].Disc = "Espanhol";
+	strcpy(Disc[TLD].Disc, "Espanhol");
 	TLD++;
 	Disc[TLD].CodDisc = 104;
-	Disc[TLD].Disc = "Fisica";
+	strcpy(Disc[TLD].Disc, "Fisica");
 	TLD++;
-	Nota[TLA].RA = 262412616;
+	strcpy(Nota[TLA].RA, "26.24.1261-6");
 	Nota[TLA].CodDisc = 100;
 	Nota[TLA].Nota = 8.5;
 	TLN++;
-	Nota[TLA].RA = 262412616;
+	strcpy(Nota[TLA].RA, "26.24.1261-6");
 	Nota[TLA].CodDisc = 101;
 	Nota[TLA].Nota = 4.0;
 	TLN++;
-	Nota[TLA].RA = 262412615;
+	strcpy(Nota[TLA].RA, "26.24.1261-5");
 	Nota[TLA].CodDisc = 102;
 	Nota[TLA].Nota = 2.0;
 	TLN++;
-	Nota[TLA].RA = 262412614;
+	strcpy(Nota[TLA].RA, "26.24.1261-4");
 	Nota[TLA].CodDisc = 103;
 	Nota[TLA].Nota = 9.0;
 	TLN++;
-	Nota[TLA].RA = 262412613;
+	strcpy(Nota[TLA].RA, "26.24.1261-3");
 	Nota[TLA].CodDisc = 104;
 	Nota[TLA].Nota = 5.0;
 	TLN++;
+	gotoxy(30,6);
+	printf("Dados Inseridos!");
+	gotoxy(12,23);
+	getche();
 }
 
 void ExecCadastros(void) {
@@ -328,13 +333,13 @@ void ExecCadastros(void) {
 			case 'C': CadastroNotas(Notas,TLN);
 			break;
 			
-			case 'D': MenuConsultas();
+			case 'D': InserirDados(Alunos,TLA,Disc,TLD,Notas,TLN);
 			break;
 			
 		}
 		
 	}while(opcao!=27);
-		MenuCadastros();
+		Menu();
 }
 
 void ExecExclusoes(void) {
@@ -409,7 +414,28 @@ void ExecConsultas(void) {
 		MenuConsultas();
 }
 
+void setConsoleSize(int width, int height) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hConsole == INVALID_HANDLE_VALUE) return;
+
+    SMALL_RECT rect;
+    rect.Left = 0;
+    rect.Top = 0;
+    rect.Right = width - 1;
+    rect.Bottom = height - 1;
+
+    SetConsoleWindowInfo(hConsole, TRUE, &rect);
+    
+    COORD coord;
+    coord.X = width;
+    coord.Y = height;
+    SetConsoleScreenBufferSize(hConsole, coord);
+}
+
 void Executar(void) {
+	int largura = 80;
+    int altura = 25;
+    setConsoleSize(largura, altura);
 	char opcao;
 	do{
 		opcao=Menu();
@@ -438,8 +464,8 @@ void Executar(void) {
 
 int main(void) {
 	Executar();
-	getch();
 	system("cls");
 	return 0;	
 }
+
 
