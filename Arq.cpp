@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <conio2.h>
 #include <stdlib.h>
@@ -12,15 +11,22 @@ struct TpAlunos {
 };
 
 struct TpDisc {
-	int CodDisc;
+	char CodDisc[4];
 	char Disc[30];
 };
 
 struct TpNota {
 	char RA[13];
-	int CodDisc;
+	char CodDisc[4];
 	float Nota;
 };
+
+TpAlunos Alunos[TF];
+int TLA = 0;
+TpDisc Disc[TF];
+int TLD = 0;
+TpNota Notas[TF];
+int TLN = 0;
 
 void Moldura(int ColunaI, int LinhaI, int ColunaF, int LinhaF, int CorT/*, int CorF */) {
 	int i;
@@ -153,17 +159,30 @@ char MenuConsultas(void) {
 	printf("C O N S U L T A");
 	textcolor(10);
 	gotoxy(4,8);
-	printf("[A] Cadastrar Alunos");
+	printf("[A] Consultar Alunos");
 	gotoxy(4,10);
-	printf("[B] Cadastrar Disciplina");
+	printf("[B] Consultar Disciplina");
 	gotoxy(4,12);
-	printf("[C] Registrar Notas");
+	printf("[C] Consultar Notas");
 	gotoxy(4,14);
 	printf("[D] Inserir Dados");
 	gotoxy(4,16);
 	printf("[ESC] Voltar");
 	gotoxy(12,23);
 	return toupper(getche());
+}
+
+int BuscarAluno(TpAlunos Alunos[TF], int TLA, char Aux[13])
+{
+	int pos = 0;
+	while(pos < TLA && strcmp(Alunos[pos].RA,Aux) != 0)
+		pos++;
+	
+	if(pos < TLA) {
+		return pos;
+	} else {
+		return -1;
+	}
 }
 
 void CadastrarAluno(TpAlunos Alunos[TF], int &TLA)
@@ -175,81 +194,166 @@ void CadastrarAluno(TpAlunos Alunos[TF], int &TLA)
         gets(AuxRA);
         while(TLA<TF && strcmp(AuxRA,"\0")!=0)
         {
-            strcpy(Alunos[TLA].RA,AuxRA);
-            ExibirTelao(30,7);
-			printf("Nome: ");
-            fflush(stdin);
-            gets(Alunos[TLA].Nome);
-            TLA++;
-            ExibirTelao(30,6);
-            printf("                                             ");
-            ExibirTelao(30,7);
-            printf("                                             ");
+        	int x = BuscarAluno(Alunos,TLA,AuxRA);
+        	if(x == -1) 
+			{
+            	strcpy(Alunos[TLA].RA,AuxRA);
+            	ExibirTelao(30,7);
+				printf("Nome: ");
+            	fflush(stdin);
+            	gets(Alunos[TLA].Nome);
+            	TLA++;
+            	ExibirTelao(30,6);
+            	printf("                                                ");
+            	ExibirTelao(30,7);
+            	printf("                                                ");
+        	} else {
+        		ExibirTelao(30,7);
+        		printf("RA ja cadastrado com o nome %s!", Alunos[x].Nome);
+        		Sleep(2000);
+        		ExibirTelao(30,6);
+            	printf("                                                ");
+            	ExibirTelao(30,7);
+            	printf("                                                ");
+			}
     		ExibirTelao(30,6);
             printf("RA: ");
             fflush(stdin);
             gets(AuxRA);
-        }
+		}
+}
+
+
+int BuscarDisc(TpDisc Disc[TF], int TLD, char Aux[4])
+{
+	int pos = 0;
+	while(pos < TLD && strcmp(Disc[pos].CodDisc,Aux) != 0)
+		pos++;
+	
+	if(pos < TLD) {
+		return pos;
+	} else {
+		return -1;
+	}
 }
 
 void CadastrarDisciplina(TpDisc Disc[TF], int &TLD)
 {
-    	int AuxCODDIC;
+    	char AuxDisc[4];
     	ExibirTelao(30,6);
         printf("Codigo da Disciplina: ");
         fflush(stdin);
-        scanf("%d",&AuxCODDIC);
-        while(TLD<TF && AuxCODDIC != 0)
+        gets(AuxDisc);
+        while(TLD<TF && strcmp(AuxDisc,"\0") != 0)
         {
-            Disc[TLD].CodDisc = AuxCODDIC;
-            ExibirTelao(30,7);
-            printf("Nome da Disciplina: ");
-            fflush(stdin);
-            gets(Disc[TLD].Disc);
-            TLD++;
-            ExibirTelao(30,6);
-            printf("                                             ");
-            ExibirTelao(30,7);
-            printf("                                             ");
-    		ExibirTelao(30,6);
-            printf("Codigo da Disciplina: ");
-            fflush(stdin);
-            scanf("%d",&AuxCODDIC);
-        }
+        	int x = BuscarDisc(Disc,TLD,AuxDisc);
+        	if(x == -1)
+        	{
+	            strcpy(Disc[TLD].CodDisc,AuxDisc);
+	            ExibirTelao(30,7);
+	            printf("Nome da Disciplina: ");
+	            fflush(stdin);
+	            gets(Disc[TLD].Disc);
+	            TLD++;
+	            ExibirTelao(30,6);
+	            printf("                                                ");
+	            ExibirTelao(30,7);
+	            printf("                                                ");
+			} else {
+				ExibirTelao(30,7);
+        		printf("Codigo de disciplina ja cadastrado com o nome %s!", Disc[x].CodDisc);
+        		Sleep(2000);
+        		ExibirTelao(30,6);
+            	printf("                                                ");
+            	ExibirTelao(30,7);
+            	printf("                                                ");
+			}
+			ExibirTelao(30,6);
+	        printf("Codigo da Disciplina: ");
+	        fflush(stdin);
+        	gets(AuxDisc);
+		}
         
 }
 
-void CadastroNotas(TpNota TbNota[TF],int &TLN)
+int BuscarNota(TpNota notas[TF], int TLN, char CodDisc[4], char RA[13]) {
+    int pos = 0;
+
+    while (pos < TLN && (strcmp(notas[pos].CodDisc, CodDisc) != 0 && strcmp(notas[pos].RA, RA) != 0)) {
+        pos++;
+    }
+
+    if (pos < TLN) {
+        return pos;
+    } else {
+        return -1;
+    }
+}
+
+
+void CadastroNotas(TpNota Nota[TF],int &TLN, TpAlunos Alunos[TF], int &TLA, TpDisc Disc[TF], int &TLD)
 {
+    	char AuxDisc[4];
     	char AuxRA[13];
     	ExibirTelao(30,6);
-        printf("RA: ");
+        printf("Codigo da Disciplina: ");
         fflush(stdin);
-        gets(AuxRA);
-        while(TLN<TF && strcmp(AuxRA,"\0")!=0)
+        gets(AuxDisc);
+        while(TLN<TF && strcmp(AuxDisc,"\0")!=0)
         {
-            strcpy(TbNota[TLN].RA,AuxRA);
-            ExibirTelao(30,7);
-            printf("Codigo da Disciplina: ");
-            fflush(stdin);
-            scanf("%d",&TbNota[TLN].CodDisc);
-            ExibirTelao(30,8);
-            printf("Nota do Aluno: ");
-            fflush(stdin);
-            scanf("%f",&TbNota[TLN].Nota);
-            TLN++;
-            ExibirTelao(30,6);
-            printf("                                             ");
-            ExibirTelao(30,7);
-            printf("                                             ");
-            ExibirTelao(30,8);
-            printf("                                             ");
-    		ExibirTelao(30,6);
-            printf("RA: ");
-            fflush(stdin);
-            gets(AuxRA);
+        	int y = BuscarDisc(Disc,TLD,AuxDisc);
+        	if(y != -1) {
+				ExibirTelao(30,7);
+            	printf("RA: ");
+       			fflush(stdin);
+        		gets(AuxRA);
+        		int z = BuscarAluno(Alunos,TLA,AuxRA);
+        		if(z != -1) {
+        			int x = BuscarNota(Nota,TLN,AuxDisc,AuxRA);
+					if(x == -1)
+					{
+			        	strcpy(Nota[TLN].RA,AuxRA);
+			        	strcpy(Nota[TLN].CodDisc,AuxDisc);
+			            ExibirTelao(30,8);
+			            printf("Nota do Aluno: ");
+			            fflush(stdin);
+			            scanf("%f",&Nota[TLN].Nota);
+			            TLN++;
+			            ExibirTelao(30,6);
+			            printf("                                                ");
+			            ExibirTelao(30,7);
+			            printf("                                                ");
+			            ExibirTelao(30,8);
+			            printf("                                                ");
+					} else {
+						ExibirTelao(30,8);
+		        		printf("Nota nesta disciplina, e deste aluno ja foi");
+						ExibirTelao(30,9);
+						printf("cadastrada, nota: %.2f!", Nota[x].Nota);
+		        		Sleep(3000);
+		        		ExibirTelao(30,6);
+		            	printf("                                                ");
+		            	ExibirTelao(30,7);
+		            	printf("                                                ");
+		            	ExibirTelao(30,8);
+		            	printf("                                                ");
+		            	ExibirTelao(30,9);
+		            	printf("                                                ");
+					}
+				} else {
+					ExibirTelao(30,7);
+					printf("Este Aluno nao existe!");
+				}
+			} else {
+				ExibirTelao(30,7);
+				printf("Esta Disciplina nao existe!");
+			}
+            
+			ExibirTelao(30,6);
+        	printf("Codigo da Disciplina: ");
+        	fflush(stdin);
+       		gets(AuxDisc);
         }
-
 }
 
 void InserirDados(TpAlunos Aluno[TF], int &TLA, TpDisc Disc[TF], int &TLD, TpNota Nota[TF],int &TLN) {
@@ -271,40 +375,40 @@ void InserirDados(TpAlunos Aluno[TF], int &TLA, TpDisc Disc[TF], int &TLD, TpNot
 	strcpy(Aluno[TLA].RA, "26.24.1261-1");
 	strcpy(Aluno[TLA].Nome, "Pedro");
 	TLA++;
-	Disc[TLD].CodDisc = 100;
+	strcpy(Disc[TLD].CodDisc,"100");
 	strcpy(Disc[TLD].Disc, "Matematica");
 	TLD++;
-	Disc[TLD].CodDisc = 101;
+	strcpy(Disc[TLD].CodDisc,"101");
 	strcpy(Disc[TLD].Disc, "Portugues");
 	TLD++;
-	Disc[TLD].CodDisc = 102;
+	strcpy(Disc[TLD].CodDisc,"102");
 	strcpy(Disc[TLD].Disc, "Ingles");
 	TLD++;
-	Disc[TLD].CodDisc = 103;
+	strcpy(Disc[TLD].CodDisc,"103");
 	strcpy(Disc[TLD].Disc, "Espanhol");
 	TLD++;
-	Disc[TLD].CodDisc = 104;
+	strcpy(Disc[TLD].CodDisc,"104");
 	strcpy(Disc[TLD].Disc, "Fisica");
 	TLD++;
-	strcpy(Nota[TLA].RA, "26.24.1261-6");
-	Nota[TLA].CodDisc = 100;
-	Nota[TLA].Nota = 8.5;
+	strcpy(Nota[TLN].RA, "26.24.1261-6");
+	strcpy(Disc[TLN].CodDisc,"100");
+	Nota[TLN].Nota = 8.5;
 	TLN++;
-	strcpy(Nota[TLA].RA, "26.24.1261-6");
-	Nota[TLA].CodDisc = 101;
-	Nota[TLA].Nota = 4.0;
+	strcpy(Nota[TLN].RA, "26.24.1261-6");
+	strcpy(Disc[TLN].CodDisc,"101");
+	Nota[TLN].Nota = 4.0;
 	TLN++;
-	strcpy(Nota[TLA].RA, "26.24.1261-5");
-	Nota[TLA].CodDisc = 102;
-	Nota[TLA].Nota = 2.0;
+	strcpy(Nota[TLN].RA, "26.24.1261-5");
+	strcpy(Disc[TLN].CodDisc,"102");
+	Nota[TLN].Nota = 2.0;
 	TLN++;
-	strcpy(Nota[TLA].RA, "26.24.1261-4");
-	Nota[TLA].CodDisc = 103;
-	Nota[TLA].Nota = 9.0;
+	strcpy(Nota[TLN].RA, "26.24.1261-4");
+	strcpy(Disc[TLN].CodDisc,"103");
+	Nota[TLN].Nota = 9.0;
 	TLN++;
-	strcpy(Nota[TLA].RA, "26.24.1261-3");
-	Nota[TLA].CodDisc = 104;
-	Nota[TLA].Nota = 5.0;
+	strcpy(Nota[TLN].RA, "26.24.1261-3");
+	strcpy(Disc[TLN].CodDisc,"104");
+	Nota[TLN].Nota = 5.0;
 	TLN++;
 	gotoxy(30,6);
 	printf("Dados Inseridos!");
@@ -312,14 +416,8 @@ void InserirDados(TpAlunos Aluno[TF], int &TLA, TpDisc Disc[TF], int &TLD, TpNot
 	getche();
 }
 
-void ExecCadastros(void) {
+void ExecCadastros(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota Notas[TF],int &TLN) {
 	char opcao;
-	TpAlunos Alunos[TF];
-	int TLA = 0;
-	TpDisc Disc[TF];
-	int TLD = 0;
-	TpNota Notas[TF];
-	int TLN = 0;
 	do{
 		opcao=MenuCadastros();
 		switch(opcao)
@@ -330,7 +428,7 @@ void ExecCadastros(void) {
 			case 'B': CadastrarDisciplina(Disc,TLD);
 			break;
 			
-			case 'C': CadastroNotas(Notas,TLN);
+			case 'C': CadastroNotas(Notas,TLN,Alunos,TLA,Disc,TLD);
 			break;
 			
 			case 'D': InserirDados(Alunos,TLA,Disc,TLD,Notas,TLN);
@@ -342,7 +440,7 @@ void ExecCadastros(void) {
 		Menu();
 }
 
-void ExecExclusoes(void) {
+void ExecExclusoes(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota Notas[TF],int &TLN) {
 	char opcao;
 	do{
 		opcao=MenuExclusoes();
@@ -366,7 +464,7 @@ void ExecExclusoes(void) {
 		MenuExclusoes();
 }
 
-void ExecAlteracoes(void) {
+void ExecAlteracoes(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota Notas[TF],int &TLN) {
 	char opcao;
 	do{
 		opcao=MenuAlteracoes();
@@ -390,7 +488,7 @@ void ExecAlteracoes(void) {
 		MenuAlteracoes();
 }
 
-void ExecConsultas(void) {
+void ExecConsultas(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota Notas[TF],int &TLN) {
 	char opcao;
 	do{
 		opcao=MenuConsultas();
@@ -433,28 +531,36 @@ void setConsoleSize(int width, int height) {
 }
 
 void Executar(void) {
+	TpAlunos Alunos[TF];
+	int TLA = 0;
+	TpDisc Disc[TF];
+	int TLD = 0;
+	TpNota Notas[TF];
+	int TLN = 0;
+	
 	int largura = 80;
     int altura = 25;
     setConsoleSize(largura, altura);
+    
 	char opcao;
 	do{
 		opcao=Menu();
 		switch(opcao)
 		{
 			case 'A': 
-			ExecCadastros();
+			ExecCadastros(Alunos,TLA,Disc,TLD,Notas,TLN);
 			break;
 			
 			case 'B': 
-			ExecExclusoes();
+			ExecExclusoes(Alunos,TLA,Disc,TLD,Notas,TLN);
 			break;
 			
 			case 'C': 
-			ExecAlteracoes();
+			ExecAlteracoes(Alunos,TLA,Disc,TLD,Notas,TLN);
 			break;
 			
 			case 'D': 
-			ExecConsultas();
+			ExecConsultas(Alunos,TLA,Disc,TLD,Notas,TLN);
 			break;		
 		}
 		
