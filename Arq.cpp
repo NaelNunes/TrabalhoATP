@@ -138,14 +138,12 @@ char MenuAlteracoes(void) {
 	printf("A L T E R A R");
 	textcolor(10);
 	gotoxy(4,8);
-	printf("[A] Alterar");
+	printf("[A] Alterar Alunos");
 	gotoxy(4,10);
-	printf("[B] Cadastrar Disciplina");
+	printf("[B] Alterar Disciplinas");
 	gotoxy(4,12);
-	printf("[C] Registrar Notas");
+	printf("[C] Alterar Notas");
 	gotoxy(4,14);
-	printf("[D] Inserir Dados");
-	gotoxy(4,16);
 	printf("[ESC] Voltar");
 	gotoxy(12,23);
 	return toupper(getche());
@@ -416,6 +414,151 @@ void InserirDados(TpAlunos Aluno[TF], int &TLA, TpDisc Disc[TF], int &TLD, TpNot
 	getche();
 }
 
+void AlterarAlunos(TpAlunos Alu[TF],int TL)
+{
+    char AuxRA[13];
+    int pos;
+    printf("\n###Alterar pelo RA\n###");
+    printf("\n RA p/ alterar");
+    gets(AuxRA);
+    while(strcmp(AuxRA,"\0")!=0)
+    {
+        pos=BuscarAluno(Alu,TL,AuxRA);
+        if(pos==-1)
+            printf("\nRA não encontrado!");
+        else
+        {
+            printf("\n#Dados encontrados#\n");
+            printf("RA: %s\n",Alu[pos].RA);
+            printf("Nome: %s\n",Alu[pos].Nome);
+            printf("\nConfirma Alteracao? S/N \n");
+            fflush(stdin);
+            if(toupper(getche())=='S')
+            {
+                printf("\n RA p/ alterar: ");
+                gets(Alu[pos].RA);
+                printf("\n Alterado!\n");
+                printf("\n Nome p/ alterar: ");
+                gets(Alu[pos].Nome);
+                printf("\n Alterado!\n");
+                getch();
+            }
+        }
+        printf("\nRA p/ Alterar");
+        gets(AuxRA);
+    }
+
+}
+
+void AlterarDisc(TpDisc TbDisc[TF],int TL)
+{
+    char Cod[4];
+    int pos;
+    printf("\n###Alterar pelo Codigo da Disciplina\n###");
+    printf("\n Codigo p/ alterar");
+    gets(Cod);
+    while(strcmp(Cod,"\0")!=0)
+    {
+        pos=BuscarDisc(TbDisc,TL,Cod);
+        if(pos==-1)
+            printf("\nCodigo não encontrado!");
+        else
+        {
+            printf("\n#Dados encontrados#\n");
+            printf("Codigo: %s\n",TbDisc[pos].CodDisc);
+            printf("Nome Da disciplina: %s\n", TbDisc[pos].Disc);
+            printf("\nConfirma Alteracao? S/N \n");
+            fflush(stdin);
+            if(toupper(getche())=='S')
+            {
+                printf("\n Codigo p/ alterar: ");
+                gets(TbDisc[pos].CodDisc);
+                printf("\n Alterado!\n");
+                printf("\n Nome Da disciplina p/ alterar: ");
+                gets(TbDisc[pos].Disc);
+                printf("\n Alterado!\n");
+                getch();
+            }
+        }
+        printf("\nCodigo p/ Alterar");
+        gets(Cod);
+    }
+
+}
+
+void AlterarNotas(TpNota Notas[TF],int TL)
+{
+    char AuxRA[13];
+    char AuxDisc[4];
+    int pos;
+    ExibirTelao(30,6);
+    printf("RA p/ alterar: ");
+    fflush(stdin);
+    gets(AuxRA);
+    while(strcmp(AuxRA,"\0")!=0)
+    {
+    	ExibirTelao(30,7);
+    	printf("Codigo da Disciplina: ");
+    	fflush(stdin);
+    	gets(AuxDisc);
+        pos = BuscarNota(Notas,TL,AuxDisc,AuxRA);
+        if(pos==-1) {
+         	ExibirTelao(30,6);
+			printf("                                                ");
+			ExibirTelao(30,7);
+			printf("                                                ");
+			ExibirTelao(30,6);
+            printf("Dados não encontrados!");
+            Sleep(2000);
+		}
+        else
+        {
+        	ExibirTelao(30,6);
+			printf("                                                ");
+			ExibirTelao(30,7);
+			printf("                                                ");
+			ExibirTelao(30,6);
+            printf("#Dados encontrados#");
+            ExibirTelao(30,7);
+            printf("RA: %s\n", Notas[pos].RA);
+            ExibirTelao(30,8);
+            printf("Codigo da Disciplina: %s", Notas[pos].CodDisc);
+            ExibirTelao(30,9);
+            printf("Nota: %f", Notas[pos].Nota);
+            ExibirTelao(30,10);
+            printf("Gostaria de Alterar a nota? S/N");
+            fflush(stdin);
+            if(toupper(getche()) =='S' )
+            {
+            	ExibirTelao(30,6);
+				printf("                                                ");
+				ExibirTelao(30,7);
+				printf("                                                ");
+				ExibirTelao(30,8);
+				printf("                                                ");
+				ExibirTelao(30,9);
+				printf("                                                ");
+				ExibirTelao(30,10);
+				printf("                                                ");
+				ExibirTelao(30,6);
+                printf("Nota p/ alterar: ");
+                scanf("%f", &Notas[pos].Nota);
+                ExibirTelao(30,7);
+                printf("\n Alterado!\n");
+                getch();
+            }
+        }
+        ExibirTelao(30,6);
+		printf("                                                ");
+		ExibirTelao(30,7);
+		printf("                                                ");
+        ExibirTelao(30,6);
+        printf("RA p/ Alterar");
+        gets(AuxRA);
+    }
+
+}
+
 void ExecCadastros(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota Notas[TF],int &TLN) {
 	char opcao;
 	do{
@@ -470,18 +613,15 @@ void ExecAlteracoes(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota
 		opcao=MenuAlteracoes();
 		switch(opcao)
 		{
-			case 'A': MenuCadastros();
+			case 'A': AlterarAlunos(Alunos,TLA);
 			break;
 			
-			case 'B': MenuExclusoes();
+			case 'B': AlterarDisc(Disc,TLD);
 			break;
 			
-			case 'C': MenuAlteracoes();
+			case 'C': AlterarNotas(Notas,TLN);
 			break;
-			
-			case 'D': MenuConsultas();
-			break;
-			
+					
 		}
 		
 	}while(opcao!=27);
