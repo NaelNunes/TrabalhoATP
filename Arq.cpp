@@ -157,14 +157,16 @@ char MenuConsultas(void) {
 	printf("C O N S U L T A");
 	textcolor(10);
 	gotoxy(4,8);
-	printf("[A] Consultar Alunos");
+	printf("[A] reprovados em 2 ou +");
 	gotoxy(4,10);
-	printf("[B] Consultar Disciplina");
+	printf("[B] determinada letra");
 	gotoxy(4,12);
-	printf("[C] Consultar Notas");
+	printf("[C] determinado termo");
 	gotoxy(4,14);
-	printf("[D] Inserir Dados");
+	printf("[D] abaixo de 6,0");
 	gotoxy(4,16);
+	printf("[D] Relatorio Geral");
+	gotoxy(4,18);
 	printf("[ESC] Voltar");
 	gotoxy(12,23);
 	return toupper(getche());
@@ -413,38 +415,120 @@ void InserirDados(TpAlunos Aluno[TF], int &TLA, TpDisc Disc[TF], int &TLD, TpNot
 	gotoxy(12,23);
 	getche();
 }
+// Função para excluir aluno e todas as suas notas
+void excluirAluno(TpAlunos TbAlunos[TF],int &TLA, TpNota TbNota[TF], int &TLN) {
+    char ra[13];
+    printf("Digite o RA do aluno a ser excluído: ");
+    fflush(stdin);
+    gets(ra);
+	    int i, j;
+	
+	    // Excluindo o aluno
+	    for (i = 0; i < TLA; i++) {
+	        if (strcmp(TbAlunos[i].RA, ra) == 0) {
+	            for (j = i; j < TLA - 1; j++) {
+	                TbAlunos[j] = TbAlunos[j + 1];
+	            }
+	            TLA--;
+	            printf("Aluno removido com sucesso!\n");
+	            break;
+	        }
+	    }
+	
+	    // Excluindo todas as notas associadas ao RA
+	    for (i = 0; i < TLN; ) 
+			{
+	        if (strcmp(TbNota[i].RA, ra) == 0) 
+				{
+	            for (j = i; j < TLN - 1; j++) 
+					{
+	                TbNota[j] = TbNota[j + 1];
+	            	}
+	            TLN--;
+	        	} 
+			else 
+	            i++;
+	    	}
+		
+}
+
+// Função para excluir disciplina e todas as notas associadas a ela
+void excluirDisciplina(TpDisc TbDisc[TF],int&TLD,TpNota TbNota[TF], int&TLN) {
+    int codigo;
+    printf("Digite o codigo da disciplina a ser excluída: ");
+    scanf("%d", &codigo);
+
+    int i, j;
+
+    // Excluindo a disciplina
+    for (i = 0; i < TLD; i++) {
+       if (*(TbDisc[i].CodDisc) == codigo) {
+            for (j = i; j < TLD - 1; j++) {
+                TbDisc[j] = TbDisc[j + 1];
+            }
+           	TLD--;
+            printf("Disciplina removida com sucesso!\n");
+            break;
+        }
+    }
+
+    // Excluindo todas as notas associadas à disciplina
+    for (i = 0; i < TLN; ) {
+    	if (*(TbDisc[i].CodDisc) == codigo) {
+            for (j = i; j <TLN - 1; j++) {
+                TbNota[j] = TbNota[j + 1];
+            }
+            TLN--;
+        } else {
+            i++;
+        }
+    }
+}
 
 void AlterarAlunos(TpAlunos Alu[TF],int TL)
 {
     char AuxRA[13];
     int pos;
-    printf("\n###Alterar pelo RA\n###");
-    printf("\n RA p/ alterar");
+    ExibirTelao(30,6);
+    printf(" RA p/ alterar:");
+    fflush(stdin);
     gets(AuxRA);
     while(strcmp(AuxRA,"\0")!=0)
     {
         pos=BuscarAluno(Alu,TL,AuxRA);
         if(pos==-1)
-            printf("\nRA não encontrado!");
+        {
+        	ExibirTelao(30,7);
+        	printf("RA não encontrado!");
+            Sleep(2000);
+        	ExibirTelao(30,6);
+            printf("                                                ");
+            ExibirTelao(30,7);
+            printf("                                                ");
+            
+        }
         else
         {
-            printf("\n#Dados encontrados#\n");
+			ExibirTelao(30,7);
+            printf("#Dados encontrados#");
             printf("RA: %s\n",Alu[pos].RA);
-            printf("Nome: %s\n",Alu[pos].Nome);
-            printf("\nConfirma Alteracao? S/N \n");
+            printf("Nome: %s",Alu[pos].Nome);
+            printf("Confirma Alteracao? S/N ");
             fflush(stdin);
             if(toupper(getche())=='S')
             {
-                printf("\n RA p/ alterar: ");
+            	ExibirTelao(30,7);
+                printf(" RA p/ alterar: ");
                 gets(Alu[pos].RA);
-                printf("\n Alterado!\n");
-                printf("\n Nome p/ alterar: ");
+                printf(" Alterado!\n");
+                printf(" Nome p/ alterar: ");
                 gets(Alu[pos].Nome);
-                printf("\n Alterado!\n");
+                printf(" Alterado!\n");
                 getch();
             }
         }
-        printf("\nRA p/ Alterar");
+        ExibirTelao(30,6);
+        printf("RA p/ Alterar");
         gets(AuxRA);
     }
 
@@ -558,6 +642,177 @@ void AlterarNotas(TpNota Notas[TF],int TL)
     }
 
 }
+void Reprov2(TpNota AuxNotas[30],int TLN,TpAlunos AuxAlunos[30],int TLA)
+{
+	int i,j,k,x=7;
+			
+	printf("Alunos que ficaram com 2 materias ou mais com a media abaixo de 6: ");
+	
+	
+	for(j=0;j<TLA;j++)
+	{
+		k=0;
+		
+		for(i=0;i<TLN;i++)
+			if(strcmp(AuxAlunos[j].RA,AuxNotas[i].RA)==0)
+				if(AuxNotas[i].Nota<6)
+					k++;
+		if(k>=2)
+		{
+			x++;
+			gotoxy(5,x++);
+			printf("RA: %s",AuxAlunos[j].RA);
+			gotoxy(5,x++);
+			printf("Nome: %s",AuxAlunos[j].Nome);
+		}
+	}
+	
+	x=38-(strlen("### Aperte qualquer teclar para sair ###")/2);
+	gotoxy(x,22);
+    printf("### Aperte qualquer teclar para sair ###");
+	getch();
+		
+}
+void BuscaInicial(TpAlunos AuxAlunos[30],int TLA)
+{
+	int i, j=9,x;
+	
+	char busca;
+	
+
+    x=38-(strlen("Busca por Inicial Aluno")/2);
+    gotoxy(x,7);		
+	printf("Busca por Inicial Aluno");
+	
+	gotoxy(5,j++);		
+	printf("Digite a Inicial que deseja buscar: ");
+	busca=toupper(getch());
+		
+	for(i=0;i<TLA;i++)
+		if(toupper(AuxAlunos[i].Nome[0])==busca)
+			{
+				if(j==10)
+				{
+				
+					j=9;
+					gotoxy(5,j++);		
+					printf("Alunos que comecam com a Inicial '%c':", busca);
+					j++;
+				}
+					
+				gotoxy(5,j++);		
+				printf("- %s", AuxAlunos[i].Nome);
+			}
+	
+	if(j==10)
+	{
+	
+		x=38-(strlen("Nao tem nenhum aluno com a inicial 'C'")/2);
+		gotoxy(x,14);		
+		printf("Nao tem nenhum aluno com a inicial '%c'",busca);
+	
+	}
+	else
+	{
+		x=38-(strlen("### Aperte qualquer teclar para sair ###")/2);
+		gotoxy(x,22);
+	    printf("### Aperte qualquer teclar para sair ###");
+		getch();
+	}	
+}
+void BuscaPalavra(TpDisc AuxDisci[30],int TLD)
+{
+	int i, j=9,x;
+	
+	char busca[100],busca2[100];
+	
+
+    x=38-(strlen("Busca por Palavra Disciplina")/2);
+    gotoxy(x,7);		
+	printf("Busca por Palavra Disciplina");
+	
+	gotoxy(5,j++);		
+	printf("Digite a Palavra que deseja buscar: ");
+	scanf(" %s",&busca);
+	
+	for(x=0;x<=strlen(busca);x++)
+		busca[x]=toupper(busca[x]);
+
+	for(i=0;i<TLD;i++)
+	{
+		
+		for(x=0;x<=strlen(AuxDisci[i].Disc);x++)
+			busca2[x]=toupper(AuxDisci[i].Disc[x]);
+		 
+		if(strstr(busca2,busca))
+			{
+				if(j==10)
+				{
+				
+					j=9;
+					gotoxy(5,j++);		
+					printf("Diciplinas que tem a palavra '%s':", busca);
+					j++;
+				}
+					
+				gotoxy(5,j++);		
+				printf("- %s", AuxDisci[i].Disc);
+			}
+	}
+}
+
+void mediag_abaixo(TpNota ad[TF], int TLN, TpDisc dcp[TF], int TLD){
+	int cont;
+	float soma;
+	system("cls");
+	printf("\n**DISCIPLINAS COM MEDIAS ABAIXO DE 6**\n");
+	for(int i=0;i<TLD;i++){
+		cont=0;
+		soma=0;
+		for(int j=0;j<TLN;j++){
+			if(stricmp(dcp[i].CodDisc,ad[j].CodDisc)==0){
+				cont++; 
+				soma+=ad[j].Nota;
+			}
+		}
+		if(soma/cont<6)
+			printf("\nDisciplina: %s Media: %.f\n",dcp[i].Disc,soma/cont);
+	}
+	getch();	
+}
+
+
+void VisualizarDados(TpNota AuxNotas[30],int &TLN,TpAlunos AuxAlunos[30],int TLA,TpDisc AuxDisci[50],int TLD)
+{
+	int i,j=7,k,x,y;
+	for(i=0;i<TLA;i++)
+	{
+		 printf("RA: %s   Nome: %s",AuxAlunos[i].RA,AuxAlunos[i].Nome);
+		
+
+		for(k=0;k<TLN;k++)
+			if(strcmp(AuxAlunos[i].RA,AuxNotas[k].RA)==0)
+			{
+				y=0;
+				
+				while(AuxNotas[k].CodDisc != AuxDisci[y].CodDisc && y<TLD)
+					y++;
+				if(AuxNotas[k].Nota>6)
+				{
+					gotoxy(5,j);printf("Disciplina: %d - %s",AuxDisci[y].CodDisc,AuxDisci[y].Disc);gotoxy(5,j++);printf("Nota: %.1f  Situacao: %s",AuxNotas[k].Nota,"Aprovado");
+				}
+				else
+				{
+					gotoxy(5,j);printf("Disciplina: %d - %s",AuxDisci[y].CodDisc,AuxDisci[y].Disc);gotoxy(43,j++);printf("Nota: %.1f  Situacao: %s",AuxNotas[k].Nota,"Reprovado");
+				}
+			}
+		j++;
+	}
+	
+	getch();
+	
+}
+
 
 void ExecCadastros(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota Notas[TF],int &TLN) {
 	char opcao;
@@ -583,16 +838,16 @@ void ExecCadastros(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota 
 		Menu();
 }
 
-void ExecExclusoes(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota Notas[TF],int &TLN) {
+void ExecExclusoes(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int&TLD,TpNota Notas[TF],int&TLN){
 	char opcao;
 	do{
 		opcao=MenuExclusoes();
 		switch(opcao)
 		{
-			case 'A': MenuCadastros();
+			case 'A': excluirAluno(Alunos,TLA,Notas,TLN);
 			break;
 			
-			case 'B': MenuExclusoes();
+			case 'B':excluirDisciplina(Disc,TLD,Notas,TLN);
 			break;
 			
 			case 'C': MenuAlteracoes();
@@ -634,16 +889,19 @@ void ExecConsultas(TpAlunos Alunos[TF],int &TLA,TpDisc Disc[TF],int &TLD,TpNota 
 		opcao=MenuConsultas();
 		switch(opcao)
 		{
-			case 'A': MenuCadastros();
+			case 'A': Reprov2(Notas,TLN,Alunos,TLA);
 			break;
 			
-			case 'B': MenuExclusoes();
+			case 'B': BuscaInicial(Alunos,TLA);
 			break;
 			
-			case 'C': MenuAlteracoes();
+			case 'C': BuscaPalavra(Disc,TLD);
 			break;
 			
-			case 'D': MenuConsultas();
+			case 'D': mediag_abaixo(Notas,TLN,Disc,TLD);
+			break;
+			
+			case 'E': VisualizarDados(Notas,TLN,Alunos,TLA,Disc,TLD);
 			break;
 			
 		}
